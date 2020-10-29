@@ -10,6 +10,9 @@ library(tmap); library(wesanderson)
 #Abrir limtes
 af <-  sf::st_read("03_dados_espaciais","ma_limite_consensual_muylaert_et_al_2018_wgs84")
 
+#db = banco de dados dos Mamiferos de medio e grande porte
+#db2 = banco de dados Mammals Alien
+
 #---------
 #Mammal Med Large
 #Abir planilha
