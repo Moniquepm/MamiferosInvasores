@@ -161,8 +161,9 @@ ma_sf_albers <- sf::st_transform(ma_sf_new, crs = 102033)
 grid_spacing <- 0.045
 
 ma_sf_grid <- ma_sf_new %>% 
-  sf::st_make_grid(cellsize = .8, crs = 4326) %>%
-  sf::st_as_sf()
+  sf::st_make_grid(cellsize = 1, square = FALSE, crs = 4326) %>%
+  sf::st_as_sf() %>% 
+  dplyr::mutate(ID = 1:nrow(.))
 ma_sf_grid
 
 plot(ma_sf_new$geometry, col = "gray", main = NA, axes = TRUE, graticule = TRUE)
@@ -178,3 +179,19 @@ ma_sf_bd_count <- ma_sf_grid_in %>%
 ma_sf_bd_count
 
 plot(ma_sf_bd_count["n"], main = NA, axes = TRUE, graticule = TRUE)
+
+
+
+ma_join_bd <- sf_bd_inside[, "Actual_species_Name"] %>% 
+  sf::st_join(x = ma_sf_grid_in, y = ., join = st_intersects) 
+  #tidyr::drop_na(Actual_species_Name)
+plot(ma_join_bd)
+ma_join_bd
+
+ma_join_bd_sp <- ma_join_bd %>% 
+  tidyr::drop_na(Actual_species_Name) %>% 
+  dplyr::distinct(ID, Actual_species_Name, .keep_all = TRUE) %>% 
+  dplyr::group_by(ID) %>% 
+  dplyr::summarise(nsp = n())
+
+plot(ma_join_bd_sp[, "nsp"])
