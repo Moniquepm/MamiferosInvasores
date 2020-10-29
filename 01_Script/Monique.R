@@ -166,14 +166,67 @@ af_join_bd2_sp <- af_join_bd2 %>%
 plot(af_join_bd2_sp[, "nsp"])
 
 
-#fazer um summer das especies para saber qtos
+ #fazer um summer das especies para saber qtos
 
-summyr
+
 #nativo X exotico no y
 # plot
-ggplot(data = sites_data) +
-  aes(x = A_mean_temp, y = wing_size) +
+ggplot(data = a) +
+  aes(x = af_join_bd_sp, y = af_join_bd2_sp) +
   geom_point() +
   geom_smooth(method = "loess", col = "red", shape = 2) +
   theme_bw() +
   labs(x = "Temperatura (º C)", y = "Tamanho da asa (cm)")
+
+
+#Mapa para apresentação DADOS USADOS
+fill_ma <- wes_palettes$Moonrise1[1]
+dots_ma <- wes_palettes$Cavalcanti1[2]
+
+br_2019 <- geobr::read_country(year = 2019, showProgress = FALSE)
+#plot(br_2019)
+ 
+map_bd <- tm_shape(af) +
+  tm_fill(col = fill_ma, alpha = .5) +
+  tm_borders(col = "black") +
+  tm_shape(br_2019) +
+  tm_fill(col = "gray", alpha = .0) +
+  tm_borders(col = "black", alpha = .5) +
+  tm_shape(bd_I) +
+  tm_bubbles(size = .1, col = "forestgreen", alpha = .5, border.col = dots_ma, border.alpha = .5) +
+  tm_grid(lines = FALSE, labels.format = list(big.mark = ""), labels.rot = c(0, 90)) +
+  tm_compass() +
+  tm_scale_bar()+
+  tm_layout(legend.position = c("left", "bottom"), 
+          legend.outside = TRUE,
+          main.title = "Medium-and-large Mammals")
+
+map_bd2 <- tm_shape(af) +
+  tm_fill(col = fill_ma, alpha = .5) +
+  tm_borders(col = "black") +
+  tm_shape(br_2019) +
+  tm_fill(col = "gray", alpha = .0) +
+  tm_borders(col = "black", alpha = .5) +
+  tm_shape(bd2_I) +
+  tm_bubbles(size = .1, col = "blue", alpha = .5, border.col = dots_ma, border.alpha = .5) +
+  tm_grid(lines = FALSE, labels.format = list(big.mark = ""), labels.rot = c(0, 90)) +
+  tm_compass() +
+  tm_scale_bar()+
+  tm_layout(legend.position = c("left", "bottom"), 
+            legend.outside = TRUE,
+            main.title = "Alien Mammals")
+
+#exportar mapa DADOS USADOS
+tmap_save(map_bd, filename = "map_mammals_midlarge.png",
+          width = 20, 
+          height = 20, 
+          units = "cm", 
+          dpi = 300)
+
+tmap_save(map_bd2, filename = "map_mammals_alien.png",
+          width = 20, 
+          height = 20, 
+          units = "cm", 
+          dpi = 300)
+
+
